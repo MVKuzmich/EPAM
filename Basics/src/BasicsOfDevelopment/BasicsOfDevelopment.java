@@ -4,31 +4,27 @@ import java.math.BigInteger;
 import java.util.*;
 
 public class BasicsOfDevelopment {
-    public static void main(String[] args) {
-
-        getFunctionResultBetweenWithStep(-11, 11, 3);
-    }
 
     /*
     ЛИНЕЙНЫЕ ПРОГРАММЫ
      */
     //Найдите значение функции (задание 1)
-    public static double getValueFromFunction(double a, double b, double c) {
+    public double getValueFromFunction(double a, double b, double c) {
         return ((a - 3) * b / 2) + c;
     }
 
     //Вычислить значение выражения по формуле (задание 2)
-    public static double getValueFromFormula(double a, double b, double c) {
+    public double getValueFromFormula(double a, double b, double c) {
         return ((b + Math.sqrt(Math.pow(b, 2.0) + 4 * a * c)) / 2 * a) - Math.pow(a, 3) + Math.pow(b, -2);
     }
 
     //Вычислить значение тригонометрической функции (задание 3)
-    public static double getValueFromTrigonometricFunction(double x, double y) {
+    public double getValueFromTrigonometricFunction(double x, double y) {
         return (Math.sin(x) + Math.cos(y)) / (Math.cos(x) - Math.sin(y)) * Math.tan(x * y);
     }
 
     //Поменять местами целую и дробную части числа (задание 4)
-    public static double rotateFractionalNumber(double number) {
+    public double rotateFractionalNumber(double number) {
         String strNumber = String.valueOf(number);
         String leftPart = strNumber.substring(0, strNumber.indexOf("."));
         String rightPart = strNumber.substring(strNumber.indexOf(".") + 1);
@@ -36,7 +32,7 @@ public class BasicsOfDevelopment {
     }
 
     //Получить время в формате hh:MM:ss из заданного количества секунд (Задание 5)
-    public static String getTimeFromSecondsByTemplate(long number) {
+    public String getTimeFromSecondsByTemplate(long number) {
         long hours = number / (60 * 60);
         long minutes = (number % (60 * 60)) / 60;
         long seconds = number % 60;
@@ -45,7 +41,7 @@ public class BasicsOfDevelopment {
     }
 
     // Проверить, попадает ли координата в выделeннyю область
-    public static boolean isGettingIntoAreaByCoordinates(int x, int y) {
+    public boolean isGettingIntoAreaByCoordinates(int x, int y) {
         return (x <= 2 && x >= -2 && y <= 4) || (x <= 4 && x >= -4 && y <= -3);
 
     }
@@ -58,7 +54,7 @@ public class BasicsOfDevelopment {
     существует ли треугольник (если - да, будет ли он прямоугольным)
     Задание 1
     */
-    public static String isTriangle(int firstAngle, int secondAngle) {
+    public String isTriangle(int firstAngle, int secondAngle) {
         String resultMessage = "";
         if (firstAngle + secondAngle >= 180) {
             resultMessage = "It's not a triangle";
@@ -75,7 +71,7 @@ public class BasicsOfDevelopment {
     max{min(a, b), min(c, d)}
     Задание 2
      */
-    public static int getMax(int a, int b, int c, int d) {
+    public int getMax(int a, int b, int c, int d) {
         int minAB = (a > b) ? a : b;
         int minCD = (c > d) ? c : d;
         return (minAB > minCD) ? minAB : minCD;
@@ -83,18 +79,18 @@ public class BasicsOfDevelopment {
     }
 
     // Даны ТРИ точки, будут ли они находится на одной прямой (Задание 3)
-    public static boolean isStraightLine(int x1, int y1, int x2, int y2, int x3, int y3) {
+    public boolean isStraightLine(int x1, int y1, int x2, int y2, int x3, int y3) {
         return (y3 - y1) * (x2 - x1) - (y2 - y1) * (x3 - x1) == 0;
     }
 
     // Определить, влезет ли кирпич (x, y, z} в отверстие (A, B) (Задание 4)
-    public static boolean isFitting(int x, int y, int z, int a, int b) {
+    public boolean isFitting(int x, int y, int z, int a, int b) {
         return x <= a && y <= b || y <= a && z <= b || x <= a && z <= b ||
                 y <= a && x <= b || z <= a && y <= b || z <= a && x <= b;
     }
 
     // Вычислить значение функции (система уравнений) (Задание 5)
-    public static double getFunctionResult(double x) {
+    public double getFunctionResult(double x) {
         double result = 0;
         if (x <= 3) {
             result = Math.pow(x, 2) + 3 * x + 9;
@@ -108,7 +104,7 @@ public class BasicsOfDevelopment {
     ЦИКЛЫ
      */
     //Определить сумму чисел от 1 до заданного числа (Задание 1)
-    public static int getSum(int input) {
+    public int getSum(int input) {
         int sum = 0;
         for (int i = 1; i < input; i++) {
             sum += i;
@@ -117,7 +113,7 @@ public class BasicsOfDevelopment {
     }
 
     //Вычислить значение функции на отрезке с шагом (Задание 2)
-    public static void getFunctionResultBetweenWithStep(int from, int to, int step) {
+    public void getFunctionResultBetweenWithStep(int from, int to, int step) {
         int result = 0;
         for (int i = from; i < to; i = i + step) {
             if (i > 2) {
@@ -130,7 +126,7 @@ public class BasicsOfDevelopment {
     }
 
     //Найти СУММУ квадратов первых ста чисел (Задание 3)
-    public static long getSquaredSum() {
+    public long getSquaredSum() {
         int sum = 0;
         for (int i = 1; i <= 100; i++) {
             sum += i * i;
@@ -139,7 +135,7 @@ public class BasicsOfDevelopment {
     }
 
     //Найти ПРОИЗВЕДЕНИЕ квадратов первых ДВУХСОТ чисел (Задание 4)
-    public static BigInteger getSquaredMultiplication() {
+    public BigInteger getSquaredMultiplication() {
         BigInteger result = BigInteger.valueOf(1);
         for (int i = 1; i <= 200; i++) {
             result = result.multiply(BigInteger.valueOf(i * i));
@@ -148,7 +144,7 @@ public class BasicsOfDevelopment {
     }
 
     //Найти сумму членов ряда, модуль которых больше или равен е (Задание 5)
-    public static double getRangeMemberSumIfGreater(double e) {
+    public double getRangeMemberSumIfGreater(double e) {
         double result = 0;
         int terminalRangeMember = 100;
         for (int i = 1; i < terminalRangeMember; i++) {
@@ -161,14 +157,14 @@ public class BasicsOfDevelopment {
     }
 
     //Вывести на экран char и соответсвующее ему число (Задание 6)
-    public static void getCharWithNumber() {
+    public void getCharWithNumber() {
         for (int i = 0; i < 65536; i++) {
             System.out.println((char) (i) + " - " + i);
         }
     }
 
     //Вывести все делители для каждого числа в промежутке от m до n (Задание 7)
-    public static void getNumberDividerListBetween() {
+    public void getNumberDividerListBetween() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter number FROM: ");
         int from = sc.nextInt();
@@ -191,7 +187,7 @@ public class BasicsOfDevelopment {
     }
 
     // Определить цифры, общие для двуч чисел (Задание 8)
-    public static String getCommonDigit(int firstNumber, int secondNumber) {
+    public String getCommonDigit(int firstNumber, int secondNumber) {
         String firstStr = String.valueOf(firstNumber);
         String secondStr = String.valueOf(secondNumber);
         Set<String> result = new HashSet<>();
