@@ -5,9 +5,10 @@ import java.util.*;
 public class Algorithmization {
 
     public static void main(String[] args) {
-        int[] arr = {10, 2, 11, 6, 6, 6, 11, 1, 11, 3, 19, 3, 30};
+        int[][] arr = {{1, 2, 11, 12, 6}, {6, 6, 6, 6, 0}, {11, 1, 11, 11, 0}, {3, 19, 3, 4, 0}, {0, 1, 3, 4, 5}};
         int number = 10;
-        replaceEverySecondItemOnNull(arr);
+        createMatrixByTemplate(6);
+
     }
 
     /*
@@ -148,13 +149,93 @@ public class Algorithmization {
         }
         return resultItem;
     }
+
     //Заменить каждый второй элемент в целочисленном массиве на ноль (без дополнительного массива) (Задание 10)
     public static void replaceEverySecondItemOnNull(int[] array) {
         for (int i = 0; i < array.length; i++) {
-            if(i % 2 != 0) {
+            if (i % 2 != 0) {
                 array[i] = 0;
             }
         }
     }
 
+    /*
+    МАССИВЫ МАССИВОВ
+     */
+    /*
+    10 9 8 7 | 10
+    5  4 3 2 | 5
+    0  1 9 8 | 0
+
+     */
+    //В многомерном массиве вывести все нечетные СТОЛБЦЫ, у которых первый элемент больше последнего (Задание 1)
+    public static void findMatrixOddColumnIfFirstItemGreaterLast(int[][] matrix) {
+        int embeddedArrayLength = matrix[0].length;
+        for (int i = 0; i < embeddedArrayLength; i++) {
+            if (i % 2 == 0 && matrix[0][i] > matrix[matrix.length - 1][i]) {
+                for (int j = 0; j < matrix.length; j++) {
+                    System.out.println(matrix[j][i]);
+                }
+            }
+            System.out.println("-------------------");
+        }
+    }
+
+    //Вывести элементы квадратной матрицы, стоящие по диагонали (Задание 2)
+    public static void printMatrixDiagonalItems(int[][] matrix) {
+        int size = matrix.length - 1;
+        for (int i = 0; i <= size; i++) {
+            for (int j = 0; j <= size; j++) {
+                if (i + j == size || i == j) {
+                    System.out.print(matrix[i][j] + " ");
+                } else {
+                    System.out.print(" - ");
+                }
+
+            }
+            System.out.println();
+
+        }
+    }
+
+    //Вывести заданные строку и столбец матрицы (Задание 3)
+    public static void printGivenMatrixRowAndColumn(int[][] matrix, int rowNumber, int columnNumber) {
+        for (int i = 0; i < matrix.length; i++) {
+            if (i == rowNumber) {
+                for (int j = 0; j < matrix[i].length; j++) {
+
+                    System.out.print(matrix[rowNumber][j] + " ");
+                }
+            }
+        }
+        System.out.println();
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (j == columnNumber) {
+                    System.out.println(matrix[i][columnNumber]);
+                }
+            }
+        }
+    }
+
+    /* Сформировать матрицу N-порядка (четное) по образцу (Задание 4)
+    1...n
+    n...1
+    ....
+     */
+    public static int[][] createMatrixByTemplate(int size) {
+        int[][] matrix = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            int first = 1;
+            int last = size;
+            for (int j = 0; j < size; j++) {
+                if (i % 2 == 0) {
+                    matrix[i][j] = first++;
+                } else {
+                    matrix[i][j] = last--;
+                }
+            }
+        }
+        return matrix;
+    }
 }
