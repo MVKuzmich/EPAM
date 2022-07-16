@@ -7,7 +7,7 @@ public class Algorithmization {
     public static void main(String[] args) {
         int[][] arr = {{1, 2, 11, 12, 6}, {6, 6, 6, 6, 0}, {11, 1, 11, 11, 0}, {3, 19, 3, 4, 0}, {0, 1, 3, 4, 5}};
         int number = 10;
-        createMatrixByTemplate(6);
+        System.out.println(countMatrixPositiveItems());
 
     }
 
@@ -162,12 +162,7 @@ public class Algorithmization {
     /*
     МАССИВЫ МАССИВОВ
      */
-    /*
-    10 9 8 7 | 10
-    5  4 3 2 | 5
-    0  1 9 8 | 0
 
-     */
     //В многомерном массиве вывести все нечетные СТОЛБЦЫ, у которых первый элемент больше последнего (Задание 1)
     public static void findMatrixOddColumnIfFirstItemGreaterLast(int[][] matrix) {
         int embeddedArrayLength = matrix[0].length;
@@ -238,4 +233,90 @@ public class Algorithmization {
         }
         return matrix;
     }
+
+    /*
+   Сформировать матрицу N-порядка (четное) по образцу (Задание 5)
+   1 1 1 1
+   2 2 2 0
+   3 3 0 0
+   4 0 0 0
+     */
+    public static int[][] createMatrixByTemplateWithNull(int size) {
+        int[][] matrix = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (i > 0 && j >= size - i) {
+                    matrix[i][j] = 0;
+                } else {
+                    matrix[i][j] = i + 1;
+                }
+            }
+        }
+        return matrix;
+    }
+
+    /*
+  Сформировать матрицу N-порядка (четное) по образцу (Задание 6)
+  1 1 1 1 1 1
+  0 1 1 1 1 0
+  0 0 1 1 0 0
+  0 0 1 1 0 0
+  0 1 1 1 1 0
+  1 1 1 1 1 1
+    */
+    public static int[][] createMatrixByTemplate2(int size) {
+        int[][] matrix = new int[size][size];
+        for (int i = 0; i < size / 2; i++) {
+            for (int j = 0; j < size; j++) {
+                if (j >= size - i || j < i) {
+                    matrix[i][j] = 0;
+                } else {
+                    matrix[i][j] = 1;
+                }
+            }
+        }
+        for (int i = size / 2; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (j > i || j < size - i - 1) {
+                    matrix[i][j] = 0;
+                } else {
+                    matrix[i][j] = 1;
+                }
+            }
+        }
+        return matrix;
+    }
+
+    /*
+    1. Cформировать квадратную матрицу порядка N по правилу
+    a[i][j] = sin((i^2 - j^2) / N)
+    2. Подсчитать количество положительных элементов
+     (Задание 7)
+     */
+    public static double[][] createMatrixByFunction(int size) {
+        double[][] matrix = new double[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                double matrixItem = Math.sin(Math.pow(i, 2) - Math.pow(j, 2)) / size;
+                matrix[i][j] = matrixItem;
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+        return matrix;
+    }
+
+    public static int countMatrixPositiveItems() {
+        int count = 0;
+        double[][] matrix = createMatrixByFunction(5);
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[i].length; j++) {
+                if(matrix[i][j] > 0) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
 }
+
