@@ -5,9 +5,14 @@ import java.util.*;
 public class Algorithmization {
 
     public static void main(String[] args) {
-        int[][] arr = {{1, 2, 11, 12, 6}, {6, 6, 6, 6, 0}, {11, 1, 11, 11, 0}, {3, 19, 3, 4, 0}, {0, 1, 3, 4, 5}};
+        int[][] arr = {
+                {1, 2, 1, 1, 6},
+                {6, 6, 6, 6, 0},
+                {1, 1, 1, 1, 0},
+                {3, 9, 3, 4, 0},
+                {0, 1, 3, 4, 5}};
         int number = 10;
-        System.out.println(countMatrixPositiveItems());
+        System.out.println(getMatrixColumnWithMaxSum(arr));
 
     }
 
@@ -290,8 +295,7 @@ public class Algorithmization {
     /*
     1. Cформировать квадратную матрицу порядка N по правилу
     a[i][j] = sin((i^2 - j^2) / N)
-    2. Подсчитать количество положительных элементов
-     (Задание 7)
+    2. Подсчитать количество положительных элементов (Задание 7)
      */
     public static double[][] createMatrixByFunction(int size) {
         double[][] matrix = new double[size][size];
@@ -309,14 +313,53 @@ public class Algorithmization {
     public static int countMatrixPositiveItems() {
         int count = 0;
         double[][] matrix = createMatrixByFunction(5);
-        for(int i = 0; i < matrix.length; i++) {
-            for(int j = 0; j < matrix[i].length; j++) {
-                if(matrix[i][j] > 0) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] > 0) {
                     count++;
                 }
             }
         }
         return count;
+    }
+
+    // Поменять местами два столбца в матрица (номера столбцов вводит пользователь) (Задание 8)
+    public static void rotateMatrixColumn(int[][] matrix) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter first column number:");
+        int firstColumn = scanner.nextInt();
+        System.out.println("Enter second column number:");
+        int secondColumn = scanner.nextInt();
+        for (int i = 0; i < matrix.length; i++) {
+            int firstItem = 0;
+            int secondItem = 0;
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (j == firstColumn) {
+                    firstItem = matrix[i][j];
+                } else if (j == secondColumn) {
+                    secondItem = matrix[i][j];
+                }
+            }
+            matrix[i][firstColumn] = secondItem;
+            matrix[i][secondColumn] = firstItem;
+        }
+    }
+
+    //Посчитать СУММУ элементов в каждом СТОЛБЦЕ матрицы, определить какой столбец содержит максимальную сумму (Задание 9)
+    public static int getMatrixColumnWithMaxSum(int[][] matrix) {
+        int maxColumnSum = 0;
+        int columnIndex = 0;
+        for (int j = 0; j < matrix.length; j++) {
+            int columnSum = 0;
+            for (int i = 0; i < matrix.length; i++) {
+                columnSum += matrix[i][j];
+            }
+            if (columnSum > maxColumnSum) {
+                maxColumnSum = columnSum;
+                columnIndex = j;
+            }
+        }
+        return columnIndex;
     }
 }
 
