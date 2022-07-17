@@ -6,13 +6,20 @@ public class Algorithmization {
 
     public static void main(String[] args) {
         int[][] arr = {
-                {1, 2, 1, 1, 6},
+                {1, 2, 3, 4, 6},
                 {6, 6, 6, 6, 0},
                 {1, 1, 1, 1, 0},
-                {3, 9, 3, 4, 0},
-                {0, 1, 3, 4, 5}};
-        int number = 10;
-        System.out.println(getMatrixColumnWithMaxSum(arr));
+                {3, 9, 3, -4, 0},
+                {0, 1, 3, 4, -5}};
+
+//        int[][] matrix = getRandomMatrixWith0And1(3, 10);
+//        for (int i = 0; i < matrix.length; i++) {
+//            for (int j = 0; j < matrix[i].length; j++) {
+//                System.out.print(matrix[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
+        replaceOddItemOnMax(arr);
 
     }
 
@@ -361,5 +368,158 @@ public class Algorithmization {
         }
         return columnIndex;
     }
+
+    //Найти положительные элементы главной диагонали квадратной матрицы (Задание 10)
+    public static String getMatrixMainDiagonalPositiveItem(int[][] matrix) {
+        List<String> positiveDiagonalItems = new ArrayList<>();
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (i == j && matrix[i][j] > 0) {
+                    positiveDiagonalItems.add(String.valueOf(matrix[i][j]));
+                }
+            }
+        }
+        return String.join(" ", positiveDiagonalItems);
+
+    }
+
+    /*
+    Заполнить матрицу 10*20 случайными числами от 0 до 15.
+    Вывести на экран матрицу
+    Вывести номера строк, в которых число 5 встречается >= 3 раз
+    (Задание 11)
+     */
+    public static void printMatrixWithRandomItem() {
+        int[][] matrix = new int[10][20];
+        List<String> rowNumber = new ArrayList<>();
+        for (int i = 0; i < matrix.length; i++) {
+            int countNumberEqual5 = 0;
+            for (int j = 0; j < matrix[i].length; j++) {
+                matrix[i][j] = (int) (Math.random() * 15);
+                System.out.print(matrix[i][j] + " ");
+                if (matrix[i][j] == 5) {
+                    countNumberEqual5++;
+                }
+            }
+            System.out.println();
+            if (countNumberEqual5 >= 3) {
+                rowNumber.add(String.valueOf(i + 1));
+            }
+        }
+        System.out.println("Номера строк, в которых количество чисел 5 больше либо равно 3:");
+        System.out.println((rowNumber.isEmpty()) ? 0 : String.join(" ", rowNumber));
+    }
+
+    /*
+    Отсортировать СТРОКИ матрицы ПО ВОЗРАСТАНИЮ значений элементов
+                                 ПО УБЫВАНИЮ значений элементов
+    (Задание 12)
+     */
+    public static void sortMatrixRowItemsAsc(int[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            Arrays.sort(matrix[i]);
+        }
+    }
+
+    public static void sortMatrixRowItemsDesc(int[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            matrix[i] = Arrays.stream(matrix[i])
+                    .boxed()
+                    .sorted(Collections.reverseOrder())
+                    .mapToInt(Integer::intValue).toArray();
+        }
+    }
+
+    /*
+    Отсортировать СТОЛБЦЫ матрицы по ВОЗРАСТАНИЮ значений элементов
+                                  по УБЫВАНИЮ значений элементов
+    (Задание 13)
+     */
+    public static void sortMatrixColumnItemsAsc(int[][] matrix) {
+        int temp;
+        for (int j = 0; j < matrix.length; j++) {
+            boolean sorted = false;
+            while (!sorted) {
+                sorted = true;
+                for (int i = 0; i < matrix.length - 1; i++) {
+                    if (matrix[i][j] > matrix[i + 1][j]) {
+                        temp = matrix[i][j];
+                        matrix[i][j] = matrix[i + 1][j];
+                        matrix[i + 1][j] = temp;
+                        sorted = false;
+                    }
+                }
+            }
+        }
+    }
+
+    public static void sortMatrixColumnItemsDesc(int[][] matrix) {
+        int temp;
+        for (int j = 0; j < matrix.length; j++) {
+            boolean sorted = false;
+            while (!sorted) {
+                sorted = true;
+                for (int i = 0; i < matrix.length - 1; i++) {
+                    if (matrix[i][j] < matrix[i + 1][j]) {
+                        temp = matrix[i][j];
+                        matrix[i][j] = matrix[i + 1][j];
+                        matrix[i + 1][j] = temp;
+                        sorted = false;
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+    Cформировать случайную матрицу m * n, состоящию из 0 и 1,
+    в каждом СТОЛБЦЕ число единиц равно номеру стоблбца (Задание 14)
+     */
+    public static int[][] getRandomMatrixWith0And1(int size1, int size2) {
+        int[][] matrix = new int[size1][size2];
+        for (int j = 0; j < size2; j++) {
+            int count1Number = 0;
+            for (int i = 0; i < size1; i++) {
+                if (count1Number < j) {
+                    matrix[i][j] = 1;
+                    count1Number++;
+                } else {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        return matrix;
+    }
+
+    /*
+    Найти найбольший элемент матрицы, заменить нечетные элементы на него (Задание 15)
+     */
+    public static int findMatrixMaxItem(int[][] matrix) {
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] > max) {
+                    max = matrix[i][j];
+                }
+            }
+        }
+        return max;
+    }
+
+    public static void replaceOddItemOnMax(int[][] matrix) {
+        int max = findMatrixMaxItem(matrix);
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if ((j + 1) % 2 != 0) {
+                    matrix[i][j] = max;
+                }
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
 }
+
+
+
 
