@@ -1,4 +1,4 @@
-package Algorithmization;
+package Algorithmization.SimpleArray;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ public class SimpleArray {
     ОДНОМЕРНЫЕ МАССИВЫ
      */
     //Найти сумму членов массива, кратных K (Задание 1)
-    public static int getSumArrayMemberDividedBy(int[] array, int number) {
+    public int getSumArrayMemberDividedBy(int[] array, int number) {
         int sum = 0;
         for (int i : array) {
             if (i % number == 0) {
@@ -21,7 +21,7 @@ public class SimpleArray {
     }
 
     //Заменить все члены,больше Z, на само Z, подсчитать количество замен (Задание 2)
-    public static int replaceIfGreaterThanAndCount(double[] array, double number) {
+    public int replaceIfGreaterThanAndCount(double[] array, double number) {
         int countReplace = 0;
         for (int i = 0; i < array.length; i++) {
             if (array[i] > number) {
@@ -33,7 +33,7 @@ public class SimpleArray {
     }
 
     //Подсчитать отрицательные, положительные и нулевые элементы массива (Задание 3)
-    public static String countPositiveNegativeNullable(double[] array) {
+    public String countPositiveNegativeNullable(double[] array) {
         int countPositive = 0;
         int countNegative = 0;
         int countNullable = 0;
@@ -50,7 +50,7 @@ public class SimpleArray {
     }
 
     //Поменять местами максимальный и минимальный элементы массива (Задание 4)
-    public static void rotateMaxMin(double[] array) {
+    public void rotateMaxMin(double[] array) {
         double max = Arrays.stream(array).max().getAsDouble();
         double min = Arrays.stream(array).min().getAsDouble();
         for (int i = 0; i < array.length; i++) {
@@ -63,7 +63,7 @@ public class SimpleArray {
     }
 
     //Вывести на печать только те элементы массива, для которых array[i] > i (Задание 5)
-    public static void getItemIfValueGreaterThanIndex(int[] array) {
+    public void getItemIfValueGreaterThanIndex(int[] array) {
         for (int i = 0; i < array.length; i++) {
             if (array[i] > i) {
                 System.out.print(array[i] + " ");
@@ -72,7 +72,7 @@ public class SimpleArray {
     }
 
     //Вычислить сумму чисел, порядковые номера которых простые числа (Задание 6)
-    public static double getItemSumIfIndexPrime(double[] array) {
+    public double getItemSumIfIndexPrime(double[] array) {
         List<Double> list = new ArrayList<>();
         double result = 0;
         for (int i = 2; i < array.length; i++) {
@@ -90,7 +90,7 @@ public class SimpleArray {
     }
 
     //в массиве действиетльных чисел найти max а1 + а2n, a2 + a(2n - 1)...(Задание 7)
-    public static double getMaxSumOppositeItems(double[] array) {
+    public double getMaxSumOppositeItems(double[] array) {
         double max = Double.MIN_VALUE;
         for (int i = 0; i < array.length / 2; i++) {
             double itemsSum = array[i] + array[array.length - 1 - i];
@@ -102,7 +102,7 @@ public class SimpleArray {
     }
 
     //Из заданного массива целых чисел удалить элементы, равные min. Получить новый массив (Задание 8)
-    public static int[] getArrayFromGivenWithoutMinItem(int[] array) {
+    public int[] getArrayFromGivenWithoutMinItem(int[] array) {
         int min = Integer.MAX_VALUE;
         int countMinItem = 1;
         for (int i = 0; i < array.length; i++) {
@@ -124,7 +124,7 @@ public class SimpleArray {
     }
 
     //Найти наиболее часто встречающееся число в целочисленном массиве(минимальное, если таких несколько) (Задание 9)
-    public static int findFrequentItem(int[] array) {
+    public int findFrequentItem(int[] array) {
         Arrays.sort(array);
         int maxFrequency = 0;
         int resultItem = 0;
@@ -146,7 +146,7 @@ public class SimpleArray {
     }
 
     //Заменить каждый второй элемент в целочисленном массиве на ноль (без дополнительного массива) (Задание 10)
-    public static void replaceEverySecondItemOnNull(int[] array) {
+    public void replaceEverySecondItemOnNull(int[] array) {
         for (int i = 0; i < array.length; i++) {
             if (i % 2 != 0) {
                 array[i] = 0;

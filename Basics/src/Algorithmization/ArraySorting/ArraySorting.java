@@ -1,18 +1,10 @@
-package Algorithmization;
+package Algorithmization.ArraySorting;
 
 import java.util.*;
 
 public class ArraySorting {
 
-    public static void main(String[] args) {
-        int[] first = {1, 1, 4, 5};
-        int[] second = {4, 2, 9, 6};
-
-//        int[] arr = getAscendingArrayFrom(first, second);
-//        System.out.println(Arrays.toString(arr));
-        executeFractionSorting(first, second);
-    }
-    /*
+     /*
     ОДНОМЕРНЫЙ МАССИВЫ. СОРТИРОВКИ
      */
 
@@ -20,7 +12,7 @@ public class ArraySorting {
     Даны два одномерных массива и число K. Включить второй массив в первый между K и K+1 элементами первого массива.
     Не использовать промежуточный массив (Задание 1)
      */
-    public static void connectTwoArray(int[] firstArray, int[] secondArray, int fromPoint) {
+    public void connectTwoArray(int[] firstArray, int[] secondArray, int fromPoint) {
         int secondArrayIndex = 0;
         int[] resultArray = new int[firstArray.length + secondArray.length];
         for (int i = 0; i < fromPoint + secondArray.length; i++) {
@@ -39,7 +31,7 @@ public class ArraySorting {
     /*
     Из двух возрастающих последовательностей создать третью возрастающую (Задание 2)
         */
-    public static int[] getAscendingArrayFrom(int[] firstArray, int[] secondArray) {
+    public int[] getAscendingArrayFrom(int[] firstArray, int[] secondArray) {
         int firstArrayIndex = 0;
         int secondArrayIndex = 0;
         int[] resultArray = new int[firstArray.length + secondArray.length];
@@ -59,7 +51,7 @@ public class ArraySorting {
     /*
     Отсортировать последовательность по убыванию - СОРТИРОВКА ВЫБОРОМ (Задание 3)
      */
-    public static void executeSelectionSorting(int[] array) {
+    public void executeSelectionSorting(int[] array) {
         for (int i = 0; i < array.length; i++) {
             int index = i;
             int max = array[i];
@@ -78,7 +70,7 @@ public class ArraySorting {
     /*
     Отсортировать последовательность по возрастанию - СОРТИРОВКА ОБМЕНАМИ (Задание 4)
      */
-    public static void executeExchangeSelection(int[] array) {
+    public void executeExchangeSelection(int[] array) {
         boolean isSorted = false;
         int temp = 0;
         int exchangeCount = 0;
@@ -104,7 +96,7 @@ public class ArraySorting {
     определить место вставки - БИНАРНЫЙ ПОИСК
     (Задание 5)
      */
-    public static int getIndexForPlaceViaBinarySearch(int[] array, int item, int first, int last) {
+    public int getIndexForPlaceViaBinarySearch(int[] array, int item, int first, int last) {
         while (first <= last) {
             int middle = first + (last - first) / 2;
             if (item == array[middle]) {
@@ -118,7 +110,7 @@ public class ArraySorting {
         return first;
     }
 
-    public static int[] executeInsertionSorting(int[] array) {
+    public int[] executeInsertionSorting(int[] array) {
         int locationIndex;
         int lastSortedIndex;
         int selectedItem;
@@ -138,7 +130,7 @@ public class ArraySorting {
     /*
     Отсортировать последовательность по возрастанию - СОРТИРОВКА ШЕЛЛА (Задание 6)
      */
-    public static double[] executeShellSorting(double[] array) {
+    public double[] executeShellSorting(double[] array) {
         int length = array.length;
         for (int gap = length / 2; gap > 0; gap /= 2) {
             for (int i = gap; i < length; i++) {
@@ -158,7 +150,7 @@ public class ArraySorting {
     Даны две возрастающии последовательности. Получить значения индексов для вставки элементов второй последовательности,
      чтобы рельтирующая последовательность осталась возрастающей (Задание 7)
      */
-    public static void getConnectingIndex(int[] firstArray, int[] secondArray) {
+    public void getConnectingIndex(int[] firstArray, int[] secondArray) {
         for (int i = 0; i < secondArray.length; i++) {
             for (int j = 0; j < firstArray.length; j++) {
                 if (firstArray[j] > secondArray[i]) {
@@ -175,7 +167,7 @@ public class ArraySorting {
     /*
     Привести дроби к общему знаменателю, отсортировать по возрастанию (Задание 8)
      */
-    public static void executeFractionSorting(int[] numerators, int[] denominators) {
+    public void executeFractionSorting(int[] numerators, int[] denominators) {
         int commonDenominator = findFractionCommonDenominator(denominators);
         for(int i = 0; i < numerators.length; i++) {
             numerators[i] = numerators[i] * commonDenominator / denominators[i];
@@ -186,7 +178,7 @@ public class ArraySorting {
         }
 
     }
-    public static int findFractionCommonDenominator(int[] denominators) {
+    public int findFractionCommonDenominator(int[] denominators) {
         int maxDenominator = 1;
         for(int i = 0; i < denominators.length; i++) {
             int twoNumberDenominator = findDenominatorFor(maxDenominator, denominators[i]);
@@ -194,7 +186,7 @@ public class ArraySorting {
         }
         return maxDenominator;
     }
-    public static int findDenominatorFor(int number1, int number2) {
+    public int findDenominatorFor(int number1, int number2) {
         if (number1 == 0 || number2 == 0) {
             return 0;
         }
