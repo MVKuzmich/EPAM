@@ -1,15 +1,20 @@
 package Algorithmization.Decomposition;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Decomposition {
     public static void main(String[] args) {
-        Point a = new Point("A",2, 2);
+        Point a = new Point("A", 2, 2);
         Point b = new Point("B", 3, 5);
-        Point c = new Point ("C", -8, 2);
+        Point c = new Point("C", -8, 2);
         Point d = new Point("D", -1, -8);
         Point[] points = {a, b, c, d};
 
-        System.out.println(new Decomposition().findMaxDistanceBetweenPoints(points));
+        int[] array = {1, 3, 4, 7, 9, 6, 2, 9};
+
+        System.out.println(new Decomposition().getTetragonSquare(1, 6, 5, 7));
     }
 
 
@@ -119,6 +124,97 @@ public class Decomposition {
             this.coordinateY = coordinateY;
         }
     }
+
+    /*
+    Найти ВТОРОЕ по величине число в массиве после максимального
+    Вывести на печать
+    (Задание 5)
+     */
+    public void findSecondMaxNumber(int[] array) {
+        int maxNumber = findMaxNumber(array);
+        int secondMaxNumber = Integer.MIN_VALUE;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] != maxNumber && array[i] > secondMaxNumber) {
+                secondMaxNumber = array[i];
+            }
+        }
+        System.out.println(secondMaxNumber);
+    }
+
+    private int findMaxNumber(int[] array) {
+        int maxNumber = Integer.MIN_VALUE;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] > maxNumber) {
+                maxNumber = array[i];
+            }
+        }
+        return maxNumber;
+    }
+
+    /*
+    Проверить, являются ли три числа взаимно простыми
+    (Задание 6)
+     */
+    public boolean isRelativelyPrime(int number1, int number2, int number3) {
+        return findGreatestCommonDivisorFor(number1, findGreatestCommonDivisor(number2, number3)) == 1;
+    }
+
+    /*
+    Вычислить сумму факториалов всех нечетных чисел от 1 до 9
+    (Задание 7)
+     */
+    public long findSumOfFactorials() {
+        int from = 1;
+        int to = 9;
+        int sum = 0;
+        for (int i = from; i < to; i++) {
+            sum += findFactorial(i);
+        }
+        return sum;
+    }
+
+    private int findFactorial(int number) {
+        int factorial = 1;
+        for (int i = 1; i <= number; i++) {
+            factorial *= i;
+        }
+        return factorial;
+    }
+
+    /*
+    Определить суммы трех последовательно расположенных членов массива с номерами от k до m
+    (Задача 8)
+     */
+    public String findArrayItemsSumBetween(int[] array, int firstIndex, int secondIndex) {
+        List<String> sumList = new ArrayList<>();
+        if(firstIndex < array.length - 2 && secondIndex < array.length - 2) {
+            for(int i = firstIndex; i <= secondIndex; i++) {
+                sumList.add(String.valueOf(findSumOfThreeNumberFrom(array, i)));
+            }
+        }
+        return String.join(" ", sumList);
+    }
+
+    private int findSumOfThreeNumberFrom(int[] array, int index) {
+        return array[index] + array[index + 1] + array[index + 2];
+    }
+
+    /*
+    Определить площадь четырехугольника, если известны его стороны, две из которых образуют прямой угол
+    (Задание 9)
+     */
+    public double getTetragonSquare(double side1, double side2, double side3, double side4) {
+//        double hypotenuse = Math.sqrt(Math.pow(side1, 2) + Math.pow(side2, 2));
+        double hypotenuse = Math.hypot(side1, side2);
+        return findTriangleSquareBySides(side1, side2, hypotenuse)
+                + findTriangleSquareBySides(hypotenuse, side3, side4);
+    }
+
+    private double findTriangleSquareBySides(double side1, double side2, double side3) {
+        double halfPerimeter = (side1 + side2 + side3) / 2;
+        return Math.sqrt(halfPerimeter * (halfPerimeter - side1) * (halfPerimeter - side2) * (halfPerimeter - side3));
+    }
+
 }
 
 
