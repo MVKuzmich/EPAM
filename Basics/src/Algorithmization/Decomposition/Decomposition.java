@@ -2,6 +2,7 @@ package Algorithmization.Decomposition;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Decomposition {
@@ -14,7 +15,7 @@ public class Decomposition {
 
         int[] array = {1, 3, 4, 7, 9, 6, 2, 9};
 
-        System.out.println(new Decomposition().getTetragonSquare(1, 6, 5, 7));
+        System.out.println(Arrays.toString(new Decomposition().getArrayFromDigitsOfNumber(9)));
     }
 
 
@@ -213,6 +214,32 @@ public class Decomposition {
     private double findTriangleSquareBySides(double side1, double side2, double side3) {
         double halfPerimeter = (side1 + side2 + side3) / 2;
         return Math.sqrt(halfPerimeter * (halfPerimeter - side1) * (halfPerimeter - side2) * (halfPerimeter - side3));
+    }
+
+    /*
+    Сформировать массив из цифер числа N (Задание 10)
+     */
+    public int[] getArrayFromDigitsOfNumber(int number) {
+        int[] array = new int[countDigitsInNumber(number)];
+        for(int i = array.length - 1; i >= 0; i--) {
+            if(number >= 10) {
+                array[i] = number % 10;
+                number /= 10;
+            } else {
+                array[i] = number;
+            }
+        }
+        return array;
+    }
+
+    private int countDigitsInNumber(int number) {
+        int item = number;
+        int digitCount = 0;
+        while(item != 0) {
+            item /= 10;
+            digitCount++;
+        }
+        return digitCount;
     }
 
 }
