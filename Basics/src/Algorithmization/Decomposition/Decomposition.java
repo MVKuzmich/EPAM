@@ -15,7 +15,7 @@ public class Decomposition {
 
         int[] array = {1, 3, 4, 7, 9, 6, 2, 9};
 
-        System.out.println(Arrays.toString(new Decomposition().getNumbersWithAscSequenceOfDigits(8)));
+        System.out.println(new Decomposition().countSubtractionsOfNumberAndSumOfItsDigits(123456789));
     }
 
 
@@ -351,7 +351,62 @@ public class Decomposition {
         return true;
     }
 
+    /*
+    Определить сумму n-значных чисел, содержащих только нечетные цифры.
+    Подсчитать количество четных цифр в найденной сумме.
+    (Задание 16)
+     */
+    public void findNumbersWithOddDigitsSumAndCountEvenDigitsInResult(int digitsCount) {
+        long sum = 0;
+        for (long i = (long) Math.pow(10, digitsCount - 1); i < (long) Math.pow(10, digitsCount); i++) {
+            if(isNumberWithOddDigits(i)) {
+                sum += i;
+                System.out.print(i + " ");
+            }
+        }
+        System.out.println();
+        System.out.println(sum);
+        System.out.println(countEvenDigitsIn(sum));
+    }
 
+    private int countEvenDigitsIn(long number) {
+        long item = number;
+        int digitsCount = 0;
+        while(item != 0) {
+            if((item % 10) % 2 == 0) {
+                digitsCount++;
+            }
+            item /= 10;
+        }
+        return digitsCount;
+    }
+
+    private boolean isNumberWithOddDigits(long number) {
+        long item = number;
+        while (item != 0) {
+            if ((item % 10) % 2 == 0) {
+                return false;
+            }
+            item /= 10;
+        }
+        return true;
+    }
+
+    /*
+    Из заданного числа вычитать сумму чисел до тех пор, пока в результате не будет 0.
+    Подсчитать количество таких операций
+    (Задание 17)
+     */
+    public int countSubtractionsOfNumberAndSumOfItsDigits(int number) {
+        int result = Integer.MIN_VALUE;
+        int subtractionCount = 0;
+        while(result != 0) {
+            result = number - getSumOfNumberDigits(number);
+            subtractionCount++;
+            number = result;
+        }
+        return subtractionCount;
+    }
 }
 
 
