@@ -15,7 +15,7 @@ public class Decomposition {
 
         int[] array = {1, 3, 4, 7, 9, 6, 2, 9};
 
-        System.out.println(Arrays.toString(new Decomposition().getArrayFromDigitsOfNumber(9)));
+        System.out.println(Arrays.toString(new Decomposition().getNumbersWithAscSequenceOfDigits(8)));
     }
 
 
@@ -188,8 +188,8 @@ public class Decomposition {
      */
     public String findArrayItemsSumBetween(int[] array, int firstIndex, int secondIndex) {
         List<String> sumList = new ArrayList<>();
-        if(firstIndex < array.length - 2 && secondIndex < array.length - 2) {
-            for(int i = firstIndex; i <= secondIndex; i++) {
+        if (firstIndex < array.length - 2 && secondIndex < array.length - 2) {
+            for (int i = firstIndex; i <= secondIndex; i++) {
                 sumList.add(String.valueOf(findSumOfThreeNumberFrom(array, i)));
             }
         }
@@ -221,8 +221,8 @@ public class Decomposition {
      */
     public int[] getArrayFromDigitsOfNumber(int number) {
         int[] array = new int[countDigitsInNumber(number)];
-        for(int i = array.length - 1; i >= 0; i--) {
-            if(number >= 10) {
+        for (int i = array.length - 1; i >= 0; i--) {
+            if (number >= 10) {
                 array[i] = number % 10;
                 number /= 10;
             } else {
@@ -235,13 +235,124 @@ public class Decomposition {
     private int countDigitsInNumber(int number) {
         int item = number;
         int digitCount = 0;
-        while(item != 0) {
+        while (item != 0) {
             item /= 10;
             digitCount++;
         }
         return digitCount;
     }
 
+    /*
+    Определить, в каком из двух чисел больше цифр
+    (Задание 11)
+     */
+    public int findNumberWithMaxDigitsAmong(int number1, int number2) {
+        return (countDigitsInNumber(number1) > countDigitsInNumber(number2)) ? number1 : number2;
+    }
+
+    /*
+    Сформировать массив А с числами, сумма цифр которых равна К, сами числа не больше N
+    (Задание 12)
+     */
+    public Integer[] getArrayWithNumberIf(int digitsSum, int numberLimit) {
+        List<Integer> numberList = new ArrayList<>();
+        for (int i = 1; i <= numberLimit; i++) {
+            if (getSumOfNumberDigits(i) == digitsSum) {
+                numberList.add(i);
+            }
+        }
+        return numberList.toArray(new Integer[0]);
+    }
+
+    private int getSumOfNumberDigits(int number) {
+        int item = number;
+        int digitSum = 0;
+        while (item != 0) {
+            digitSum += (item >= 10) ? item % 10 : item;
+            item /= 10;
+        }
+        return digitSum;
+    }
+
+    /*
+    Напечать все пары ПРОСТЫХ чисел-БЛИЗНЕЦОВ (их РАЗНОСТЬ равна 2) на отрезке [n, 2n]
+    (Задание 13)
+     */
+    public void findPrimeTwinsNumberBetween(int start, int end) {
+        int previousPrime = 2;
+        for (int i = start; i <= end; i++) {
+            if (isPrimeNumber(i)) {
+                if (i - previousPrime == 2) {
+                    System.out.println(previousPrime + " " + i);
+                }
+                previousPrime = i;
+            }
+        }
+    }
+
+    private boolean isPrimeNumber(int number) {
+        for (int i = 2; i * i <= number; i++) {
+            if (number % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+    Найти числа Армстронга (равно сумме своих цифр, возведённых в степень, равную количеству его цифр 153 = 1
+    в диапазоне от 1 до K
+    (Задание 14)
+     */
+    public void getArmstrongNumbersUntilRangeTo(int to) {
+        for (int i = 1; i < to; i++) {
+            if (isArmstrongNumber(i)) {
+                System.out.print(i + " ");
+            }
+        }
+    }
+
+    private boolean isArmstrongNumber(int number) {
+        int numberCount = countDigitsInNumber(number);
+        int item = number;
+        int digitSum = 0;
+        while (item != 0) {
+            digitSum += (item >= 10) ? (int) Math.pow(item % 10, numberCount) : (int) Math.pow(item, numberCount);
+            item /= 10;
+        }
+        return digitSum == number;
+    }
+
+    /*
+    Найти n-значные возрастающие числа, цифры образуют строго возрастающую последовательность (1234, 5678)
+    (Задание 15)
+     */
+    public Long[] getNumbersWithAscSequenceOfDigits(int digitsCount) {
+        List<Long> numberList = new ArrayList<>();
+        for (long i = (long) Math.pow(10, digitsCount - 1); i < (long) Math.pow(10, digitsCount); i++) {
+            if(isAscDigitsSequence(i)) {
+                numberList.add(i);
+            }
+        }
+        return numberList.toArray(new Long[0]);
+    }
+
+    private boolean isAscDigitsSequence(long number) {
+        long item = number;
+        long previousDigit = item % 10;
+        item /= 10;
+        while (item != 0) {
+            if (previousDigit - item % 10 != 1) {
+                return false;
+            }
+            previousDigit = item % 10;
+            item /= 10;
+        }
+        return true;
+    }
+
+
 }
+
 
 
