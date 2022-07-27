@@ -6,18 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Decomposition {
-    public static void main(String[] args) {
-        Point a = new Point("A", 2, 2);
-        Point b = new Point("B", 3, 5);
-        Point c = new Point("C", -8, 2);
-        Point d = new Point("D", -1, -8);
-        Point[] points = {a, b, c, d};
-
-        int[] array = {1, 3, 4, 7, 9, 6, 2, 9};
-
-        System.out.println(new Decomposition().countSubtractionsOfNumberAndSumOfItsDigits(123456789));
-    }
-
 
     /*
         Найти НОД и НОК двух натуральных чисел (Задание 1)
