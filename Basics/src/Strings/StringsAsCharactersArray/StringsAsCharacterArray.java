@@ -4,10 +4,6 @@ import javax.print.DocFlavor;
 import java.util.Arrays;
 
 public class StringsAsCharacterArray {
-    public static void main(String[] args) {
-        String[] array = {"camelCase", "proTo", "midName"};
-        System.out.println(new StringsAsCharacterArray().replaceWordsInStrings("lword werwwords awords word wor", "word", "letter"));
-    }
 
     /*
     Дан массив названий переменных в camelCase, преобразовать в snake_case
