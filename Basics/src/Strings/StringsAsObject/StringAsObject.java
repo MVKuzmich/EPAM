@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class StringAsObject {
     public static void main(String[] args) {
 
-        System.out.println(new StringAsObject().findWordWithMaxLength("jjhjh  ffghjghjghjg bbbbnnn"));
+        System.out.println(new StringAsObject().countSentences("j выа. ыав. @#$% ап GGhhjh! HjHl?"));
 
     }
 
@@ -88,7 +88,6 @@ public class StringAsObject {
      */
     public String removeRepeatingCharsAndSpaces(String text) {
         return Arrays.stream(text.split("")).filter(ch -> !ch.equals(" ")).distinct().collect(Collectors.joining());
-
     }
 
     /*
@@ -106,6 +105,32 @@ public class StringAsObject {
         }
         return resultWord;
     }
+    /*
+    Посчитать количество строчных и прописных букв в строке, только английские буквы (Задание 9)
+     */
 
+    public void countUpperAndLowerLetters(String text) {
+        int upperCount = 0;
+        int lowerCount = 0;
+        String regex = "[A-z]";
+        char[] chars = text.toCharArray();
+        for (char ch : chars) {
+            if (String.valueOf(ch).matches(regex)) {
+                if (Character.isUpperCase(ch)) {
+                    upperCount++;
+                } else if (Character.isLowerCase(ch)) {
+                    lowerCount++;
+                }
+            }
+        }
+        System.out.printf("Количество прописных букв %d, количество строчных - %d", upperCount, lowerCount);
+    }
 
+    /*
+    Подсчитать количество предложений в строке - предложения заканчиваются .!?
+    (Задание 10)
+     */
+    public int countSentences(String text) {
+        return text.split("[.!\\?]").length;
+    }
 }
