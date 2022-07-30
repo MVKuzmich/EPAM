@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 public class StringAsObject {
     public static void main(String[] args) {
 
-        System.out.println(new StringAsObject().countSentences("j выа. ыав. @#$% ап GGhhjh! HjHl?"));
 
     }
 
