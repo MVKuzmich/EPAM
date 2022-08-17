@@ -1,4 +1,4 @@
-package Strings.Regex.TextEditorApp;
+package strings.regex.text_editor_app;
 
 import java.util.*;
 import java.util.regex.Matcher;

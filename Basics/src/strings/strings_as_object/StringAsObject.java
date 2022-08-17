@@ -1,7 +1,6 @@
-package Strings.StringsAsObject;
+package strings.strings_as_object;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class StringAsObject {

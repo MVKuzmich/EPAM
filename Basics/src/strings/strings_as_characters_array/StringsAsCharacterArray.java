@@ -1,7 +1,4 @@
-package Strings.StringsAsCharactersArray;
-
-import javax.print.DocFlavor;
-import java.util.Arrays;
+package strings.strings_as_characters_array;
 
 public class StringsAsCharacterArray {
 
