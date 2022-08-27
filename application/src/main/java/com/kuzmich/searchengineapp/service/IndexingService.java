@@ -9,21 +9,17 @@ import com.kuzmich.searchengineapp.entity.Lemma;
 import com.kuzmich.searchengineapp.entity.Page;
 import com.kuzmich.searchengineapp.entity.Site;
 import com.kuzmich.searchengineapp.exception.IndexExecutionException;
-import com.kuzmich.searchengineapp.repository.IndexRepository;
-import com.kuzmich.searchengineapp.repository.LemmaRepository;
-import com.kuzmich.searchengineapp.repository.PageRepository;
-import com.kuzmich.searchengineapp.repository.SiteRepository;
+import com.kuzmich.searchengineapp.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.nio.channels.AsynchronousCloseException;
-import java.nio.channels.ClosedByInterruptException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ForkJoinPool;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -31,11 +27,12 @@ import java.util.stream.Collectors;
 public class IndexingService {
 
     private final SitesConcurrencyIndexingExecutor indexingExecutor;
-    private final WebSiteAnalyzer webSiteAnalyzer;
     private final SiteConfig siteConfig;
     private final SiteRepository siteRepository;
     private final PageRepository pageRepository;
     private final LemmaRepository lemmaRepository;
+    private final FieldRepository fieldRepository;
+    private final IndexRepository indexRepository;
 
 
     public ResultDTO executeIndexation() throws IndexExecutionException {
@@ -57,35 +54,42 @@ public class IndexingService {
         }
     }
 
-    public ResultDTO executePageIndexation(String pageUrl) {
+    public ResultDTO executePageIndexation(String pageUrl) throws IndexExecutionException {
         List<SiteConfig.SiteObject> siteObjects = siteConfig.getSiteArray();
         Optional<SiteConfig.SiteObject> siteObjectOptional = siteObjects.stream()
                 .filter(siteObject -> pageUrl.startsWith(siteObject.getUrl()))
                 .findFirst();
         if (siteObjectOptional.isPresent()) {
-            updateDataIfReindexExecute(pageUrl);
             String name = siteObjectOptional.get().getName();
             String url = siteObjectOptional.get().getUrl();
             Site site = siteRepository.findByNameAndUrl(name, url).get();
-            webSiteAnalyzer.setSite(site);
-            webSiteAnalyzer.setMainPath(pageUrl);
-            webSiteAnalyzer.fork();
+            WebSiteAnalyzer.setOnePageIndexation(true);
+            try {
+                updateDataIfReindexExecute(pageUrl, site.getId());
+            } catch(RuntimeException ex) {
+                log.info(ex.getMessage());
+            }
+
+            WebSiteAnalyzer wsa = new WebSiteAnalyzer(pageRepository, lemmaRepository, indexRepository, fieldRepository, siteRepository);
+            wsa.setSite(site);
+            wsa.setMainPath(pageUrl);
+            new ForkJoinPool().invoke(wsa);
+            WebSiteAnalyzer.setOnePageIndexation(false);
             return new ResultDTO(true);
         } else {
             throw new IndexExecutionException(new ResultDTO(false, "Данная страница находится за пределами сайтов, указанных в конфигурационном файле")
                     .getError());
         }
-
     }
 
-    private void updateDataIfReindexExecute(String pageUrl) {
+    private void updateDataIfReindexExecute(String pageUrl, int siteId) throws RuntimeException {
         String regex = "https?:\\/\\/\\w+\\.\\w+(\\/.*)";
         Matcher matcher = Pattern.compile(regex).matcher(pageUrl);
         String url = "";
         if (matcher.find()) {
             url = matcher.group(1);
         }
-        Page page = pageRepository.findPageByPath(url.concat("/")).orElseThrow(() -> new RuntimeException("Something wrong"));
+        Page page = pageRepository.findPageByPath(url.concat("/"), siteId).orElseThrow(() -> new RuntimeException("Url is not exist! Indexation is started"));
         List<Index> indexList = page.getIndexList();
         pageRepository.deleteById(page.getId());
         indexList.stream()
@@ -95,3 +99,4 @@ public class IndexingService {
 
     }
 }
+

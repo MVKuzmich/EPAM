@@ -4,14 +4,9 @@ import com.kuzmich.searchengineapp.dto.searchDto.SearchPageData;
 import com.kuzmich.searchengineapp.entity.Index;
 import com.kuzmich.searchengineapp.entity.Lemma;
 import com.kuzmich.searchengineapp.entity.Page;
-import com.kuzmich.searchengineapp.entity.Site;
-import com.kuzmich.searchengineapp.repository.IndexRepository;
 import com.kuzmich.searchengineapp.repository.LemmaRepository;
-import com.kuzmich.searchengineapp.repository.PageRepository;
-import com.kuzmich.searchengineapp.repository.SiteRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.lucene.morphology.LuceneMorphology;
-
 import lombok.extern.log4j.Log4j2;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 import org.jsoup.Jsoup;
@@ -29,82 +24,71 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SearchPageExecution {
     private final LemmaRepository lemmaRepository;
-    private final IndexRepository indexRepository;
-    private final PageRepository pageRepository;
-    private final SiteRepository siteRepository;
-
 
     public List<SearchPageData> getSearchResultListFromUserQuery(String userQuery, String siteUrl) {
+
         try {
             List<Lemma> lemmaObjectListFromUserQuery = findLemmasByWordsFromUserQuery(userQuery);
-            if (!lemmaObjectListFromUserQuery.isEmpty()) {
-                List<Site> siteList = (siteUrl == null)
-                        ? lemmaObjectListFromUserQuery.stream()
-                                                        .map(Lemma::getSite)
-                                                        .distinct()
-                                                        .collect(Collectors.toList())
-                        : siteRepository.findSiteBySiteUrl(siteUrl);
-                List<Index> globalIndexList = new ArrayList<>();
-                for (Site site : siteList) {
-                    List<Lemma> lemmaListBySite = lemmaObjectListFromUserQuery.stream()
-                            .filter(lemma -> lemma.getSite().getId() == site.getId())
-                            .collect(Collectors.toList());
-                    List<Index> indexListBySite = indexRepository.findAllByLemmaId(lemmaListBySite.get(0).getId()).get();
-                    for (int i = 1; i < lemmaListBySite.size(); i++) {
-                        int position = i;
-                        indexListBySite.removeIf(index -> index.getLemma().getLemma().equals(lemmaListBySite.get(position).getLemma()));
-                    }
-                    globalIndexList.addAll(indexListBySite);
-                }
-                if (!globalIndexList.isEmpty()) {
-                    return getSearchDataFromIndexes(globalIndexList, lemmaObjectListFromUserQuery);
-                }
+            List<String> lemmaWordsFromUserQuery = lemmaObjectListFromUserQuery.stream()
+                    .map(Lemma::getLemma)
+                    .distinct()
+                    .collect(Collectors.toList());
+            List<Index> totalIndexList = lemmaObjectListFromUserQuery.stream()
+                    .flatMap(lemma -> lemma.getIndexList().stream())
+                    .collect(Collectors.toList());
+            if (lemmaWordsFromUserQuery.size() != 1) {
+                Set<Integer> ids = new HashSet<>();
+                List<Integer> commonPageIds = totalIndexList.stream().map(Index::getPage).map(Page::getId).filter(id -> !ids.add(id)).collect(Collectors.toList());
+                totalIndexList.removeIf(index -> !commonPageIds.contains(index.getPage().getId()));
             }
+            return (!totalIndexList.isEmpty())
+                    ? getSearchDataFromIndexes(totalIndexList, lemmaWordsFromUserQuery) : new ArrayList<>();
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         return new ArrayList<>();
     }
 
-    private List<SearchPageData> getSearchDataFromIndexes(List<Index> indexList, List<Lemma> lemmaObjectListFromUserQuery) throws IOException {
+    private List<SearchPageData> getSearchDataFromIndexes (List<Index> indexList, List<String> lemmaWordsFromUserQuery) throws IOException {
         long startMethod = System.currentTimeMillis() / 1_000;
         List<SearchPageData> resultList = new ArrayList<>();
-        for (Index index : indexList) {
+        float maxRank = Float.MIN_VALUE;
+        List<Integer> pageIds = indexList.stream().map(Index::getPage).map(Page::getId).distinct().collect(Collectors.toList());
+        for (Integer id : pageIds) {
             long startIndex = System.currentTimeMillis() / 1000;
-            int pageId = index.getPage().getId();
-            Page page = pageRepository.findById(pageId).orElseThrow(() -> new RuntimeException("Page not found"));
-            String siteName = page.getSite().getName();
-            String siteUrl = page.getSite().getUrl();
-            String pageUri = page.getPath();
-            String pageTitle = Jsoup.parse(page.getContent()).title();
-            Element elementBody = Jsoup.parse(page.getContent()).body();
-            log.info("id {}, url {}, page title {}", pageId, pageUri, pageTitle);
-            String pageSnippetByUserQuery = createSnippetFromPage(lemmaObjectListFromUserQuery, elementBody);
-            float sumRank = 0;
-            for (Lemma lemma : lemmaObjectListFromUserQuery) {
-                Optional<Index> indexOptional = indexRepository.findLemmaRankFromIndex(pageId, lemma.getId());
-                if (indexOptional.isPresent()) {
-                    sumRank += indexOptional.get().getRank();
-                }
+            Index indexForSearchPageData = indexList.stream().filter(index -> index.getPage().getId() == id).findFirst()
+                    .orElseThrow(() -> new RuntimeException("Something wrong"));
+            Element elementBody = Jsoup.parse(indexForSearchPageData.getPage().getContent()).body();
+            float sumRank = (float) indexList.stream().filter(ind -> ind.getPage().getId() == id)
+                    .mapToDouble(Index::getRank).sum();
+            if (sumRank > maxRank) {
+                maxRank = sumRank;
             }
             SearchPageData searchPageData = SearchPageData
                     .builder()
-                    .site(siteUrl)
-                    .siteName(siteName)
-                    .uri(pageUri)
-                    .title(pageTitle)
-                    .snippet(pageSnippetByUserQuery)
+                    .site(indexForSearchPageData.getPage().getSite().getUrl())
+                    .siteName(indexForSearchPageData.getPage().getSite().getName())
+                    .uri(indexForSearchPageData.getPage().getPath())
+                    .title(Jsoup.parse(indexForSearchPageData.getPage().getContent()).title())
+                    .snippet(createSnippetFromPage(lemmaWordsFromUserQuery, elementBody))
                     .relevance(sumRank)
                     .build();
-            log.info("сниппет: {}, релевантность: {}", pageSnippetByUserQuery, sumRank);
+            log.info("сниппет: {}, релевантность: {}", searchPageData.getSnippet(), searchPageData.getRelevance());
             resultList.add(searchPageData);
             long duration = System.currentTimeMillis() / 1000 - startIndex;
-            log.info("search for: pageID {}, path {}; duration: {}", page.getId(), page.getPath(), duration);
+            log.info("search for: pageID {}, path {}; duration: {}", id, searchPageData.getUri(), duration);
         }
-        resultList.sort(Comparator.comparing(SearchPageData::getRelevance).reversed());
+        float rank = maxRank;
+        List<SearchPageData> updateResultList = resultList.stream().map(result -> {
+                    result.setRelevance(result.getRelevance() / rank);
+                    return result;
+                })
+                .sorted(Comparator.comparing(SearchPageData::getRelevance).reversed())
+                .collect(Collectors.toList());
         long duration = System.currentTimeMillis() / 1000 - startMethod;
         log.info("ДЛИТЕЛЬНОСТЬ поиска: {}", duration);
-        return resultList;
+        return updateResultList;
     }
 
     private String cleanUpHtml(String text) {
@@ -118,12 +102,13 @@ public class SearchPageExecution {
         return String.join(" ", wordList);
     }
 
-    private String createSnippetFromPage(List<Lemma> lemmaObjectListFromUserQuery, Element element) throws IOException {
-        List<String> lemmaWordsFromQuery = lemmaObjectListFromUserQuery.stream().map(Lemma::getLemma).distinct().collect(Collectors.toList());
+    private String createSnippetFromPage(List<String> lemmaWordsFromUserQuery, Element element) throws
+            IOException {
+        List<String> lemmaWords = new ArrayList<>(lemmaWordsFromUserQuery);
         long startSnippet = System.currentTimeMillis() / 1000;
         String text = element.toString().toLowerCase();
         String parseText = element.text().toLowerCase();
-        String regexFirstLetter = lemmaWordsFromQuery.stream()
+        String regexFirstLetter = lemmaWords.stream()
                 .map(w -> w.substring(0, 1))
                 .collect(Collectors.joining("|"));
         String regex = "\\b".concat("(").concat(regexFirstLetter).concat(")").concat("([А-яЁё]+)(-\1)?");
@@ -134,17 +119,16 @@ public class SearchPageExecution {
         while (matcher.find()) {
             String word = matcher.group();
             String normalWordForm = new RussianLuceneMorphology().getNormalForms(word).get(0);
-            if (lemmaWordsFromQuery.contains(normalWordForm)) {
+            if (lemmaWords.contains(normalWordForm)) {
                 log.info("лемма: {}, слово: {}", normalWordForm, word.toUpperCase());
                 lemma2word.put(normalWordForm, word);
                 wordIndexes.add(text.indexOf(word));
-                lemmaWordsFromQuery.remove(normalWordForm);
+                lemmaWords.remove(normalWordForm);
             }
-            if (lemmaWordsFromQuery.isEmpty()) {
+            if (lemmaWords.isEmpty()) {
                 break;
             }
         }
-
         String partHtml = wordIndexes.stream().map(index -> text.substring(index - 100, index + 100)).collect(Collectors.joining(" "));
         String cleanSnippet = cleanUpHtml(partHtml);
         for (String value : lemma2word.values()) {
@@ -159,7 +143,7 @@ public class SearchPageExecution {
     public List<Lemma> findLemmasByWordsFromUserQuery(String userQuery) throws IOException {
         List<Lemma> lemmaList = new ArrayList<>();
         LuceneMorphology luceneMorph = new RussianLuceneMorphology();
-        String[] queryWords = userQuery.split(" ");
+        String[] queryWords = userQuery.trim().split(" ");
 
         for (String word : queryWords) {
             if (luceneMorph.getMorphInfo(word.toLowerCase(Locale.ROOT)).stream().anyMatch(i -> i.contains("ПРЕДЛ") || i.contains("СОЮЗ")

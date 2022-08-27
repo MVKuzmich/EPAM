@@ -8,12 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IndexRepository extends JpaRepository<Index, Integer> {
-    @Query("SELECT i FROM Index i WHERE i.lemma.id = :lemmaId")
-    Optional <List<Index>> findAllByLemmaId(int lemmaId);
 
-    @Query("SELECT i FROM Index i WHERE i.page.id = :pageId AND i.lemma.id = :lemmaId")
-    Optional<Index> findLemmaRankFromIndex(int pageId, int lemmaId);
-
-    @Query("select i from Index i where i.page.id = :pageId")
-    List<Index> findAllByPageId(Integer pageId);
 }

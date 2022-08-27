@@ -4,16 +4,15 @@ import com.kuzmich.searchengineapp.entity.*;
 import com.kuzmich.searchengineapp.repository.FieldRepository;
 import com.kuzmich.searchengineapp.repository.IndexRepository;
 import com.kuzmich.searchengineapp.repository.LemmaRepository;
+import com.kuzmich.searchengineapp.repository.SiteRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.*;
-
 
 @Log4j2
 @Component
@@ -23,10 +22,9 @@ public class PageIndexExecutor {
     private final FieldRepository fieldRepository;
     private final LemmaRepository lemmaRepository;
     private final IndexRepository indexRepository;
+    private final SiteRepository siteRepository;
 
-
-    public void executePageIndexing(Page page) {
-        try {
+    public void executePageIndexing(Page page) throws IOException {
             if (!WebSiteAnalyzer.isIndexationStopped()) {
                 log.info("Индексируется {}", page.getPath());
                 long start = System.currentTimeMillis() / 1_000L;
@@ -64,14 +62,12 @@ public class PageIndexExecutor {
                     }
                 }
                 indexRepository.saveAllAndFlush(indexList);
+                siteRepository.updateSiteStatusTime(System.currentTimeMillis(), site.getId());
 
                 long end = System.currentTimeMillis() / 1_000L;
                 long indexPageDuration = end - start;
                 log.info("ИНДЕКСАЦИЯ СТРАНИЦЫ: id - {}, path - {}, ДЛИТЕЛЬНОСТЬ: {}", page.getId(), page.getPath(), indexPageDuration);
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 }
 

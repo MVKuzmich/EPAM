@@ -1,6 +1,7 @@
 package com.kuzmich.searchengineapp.exception;
 
 import com.kuzmich.searchengineapp.dto.ResultDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.filters.AddDefaultCharsetFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
+@Slf4j
 public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IndexExecutionException.class)
@@ -22,4 +24,5 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ResultDTO> handleIndexExecutionException(EmptySearchQueryException ex, WebRequest webrequest) {
         return new ResponseEntity<>(new ResultDTO(false, ex.getMessage()), HttpStatus.OK);
     }
+
 }

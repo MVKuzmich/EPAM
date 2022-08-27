@@ -1,7 +1,6 @@
 package com.kuzmich.searchengineapp.action;
 
 import com.kuzmich.searchengineapp.config.SiteConfig;
-import com.kuzmich.searchengineapp.entity.Page;
 import com.kuzmich.searchengineapp.entity.Site;
 import com.kuzmich.searchengineapp.entity.Status;
 import com.kuzmich.searchengineapp.repository.*;
@@ -11,16 +10,10 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
-import java.nio.channels.AsynchronousCloseException;
-import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
+import java.util.concurrent.*;
 
 @Component
 @RequiredArgsConstructor
@@ -40,38 +33,35 @@ public class SitesConcurrencyIndexingExecutor {
 
     public void executeSitesIndexing() {
         if (!isExecuting) {
+            setExecuting(true);
             long start = System.currentTimeMillis() / 1000;
             List<SiteConfig.SiteObject> siteObjects = siteConfig.getSiteArray();
-            List<Thread> threadList = new ArrayList<>();
+            ExecutorService pool = Executors.newFixedThreadPool(siteObjects.size());
+            List<CompletableFuture<Integer>> futureList = new ArrayList<>();
             siteObjects.stream().map(siteObject -> {
                         Optional<Site> foundSite = siteRepository.findByNameAndUrl(siteObject.getName(), siteObject.getUrl());
                         foundSite.ifPresent(s -> siteRepository.removeSiteById(s.getId()));
                         siteRepository.flush();
-                        WebSiteAnalyzer wsa = new WebSiteAnalyzer(pageRepository, lemmaRepository, indexRepository, fieldRepository);
+                        WebSiteAnalyzer siteAnalyzer = new WebSiteAnalyzer(pageRepository, lemmaRepository, indexRepository, fieldRepository, siteRepository);
                         Site site = getSite(siteObject);
-                        wsa.setSite(site);
-                        wsa.setMainPath(site.getUrl());
-                        return wsa;
+                        siteAnalyzer.setSite(site);
+                        siteAnalyzer.setMainPath(site.getUrl());
+                        return siteAnalyzer;
                     })
-                    .forEach(wsa -> {
-                        Thread thread = new Thread(() -> new ForkJoinPool().invoke(wsa));
-                        thread.start();
-                        threadList.add(thread);
-                        setExecuting(true);
-
+                    .map(siteAnalyzer -> {
+                        CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> {
+                            new ForkJoinPool().invoke(siteAnalyzer);
+                            return siteAnalyzer.getSite().getId();
+                        }, pool);
+                        futureList.add(future);
+                        return future;
+                    })
+                    .forEach(future -> {
+                        future.thenAccept(result -> siteRepository.updateSiteStatus(Status.INDEXED, result));
                     });
-            for (Thread thread : threadList) {
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            futureList.forEach(CompletableFuture::join);
             setExecuting(false);
-            siteRepository.findAll()
-                    .forEach(site -> siteRepository.updateSiteStatusAfterIndexation(Status.INDEXED, site.getId()));
-
-            log.info("ИТОГО длительность ИНДЕКСАЦИИ: {}", System.currentTimeMillis() / 1000 - start);
+            log.info("ИТОГО длительность ИНДЕКСАЦИИ: {} минут", (System.currentTimeMillis() / 1000 - start) / 60);
         }
     }
 
@@ -84,9 +74,7 @@ public class SitesConcurrencyIndexingExecutor {
                 siteObject.getName()
         );
         return siteRepository.saveAndFlush(site);
-
     }
-
 }
 
 

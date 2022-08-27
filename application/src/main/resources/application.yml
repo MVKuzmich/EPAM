@@ -14,6 +14,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: false
   thymeleaf:
     prefix: classpath:/templates/
   web:
@@ -33,6 +34,9 @@ externaldata:
 #      name: Булгаковский дом
 #    - url: https://nikoartgallery.com
 #      name: Галерея Никогосяна
-    - url: https://www.svetlovka.ru
-      name: ЦГМБ им.М.А.Светлова
-
+#    - url: https://www.svetlovka.ru
+#      name: ЦГМБ им.М.А.Светлова
+    - url: https://imkliva.by
+      name: Страховая компания
+    - url: https://et-cetera.ru/mobile/
+      name: Театр
