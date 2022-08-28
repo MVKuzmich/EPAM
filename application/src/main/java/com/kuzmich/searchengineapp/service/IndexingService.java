@@ -70,7 +70,7 @@ public class IndexingService {
                 log.info(ex.getMessage());
             }
 
-            WebSiteAnalyzer wsa = new WebSiteAnalyzer(pageRepository, lemmaRepository, indexRepository, fieldRepository, siteRepository);
+            WebSiteAnalyzer wsa = new WebSiteAnalyzer(pageRepository, lemmaRepository, indexRepository, fieldRepository, siteRepository, siteConfig);
             wsa.setSite(site);
             wsa.setMainPath(pageUrl);
             new ForkJoinPool().invoke(wsa);

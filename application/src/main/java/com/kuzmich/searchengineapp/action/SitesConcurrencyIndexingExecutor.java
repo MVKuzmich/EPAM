@@ -42,7 +42,7 @@ public class SitesConcurrencyIndexingExecutor {
                         Optional<Site> foundSite = siteRepository.findByNameAndUrl(siteObject.getName(), siteObject.getUrl());
                         foundSite.ifPresent(s -> siteRepository.removeSiteById(s.getId()));
                         siteRepository.flush();
-                        WebSiteAnalyzer siteAnalyzer = new WebSiteAnalyzer(pageRepository, lemmaRepository, indexRepository, fieldRepository, siteRepository);
+                        WebSiteAnalyzer siteAnalyzer = new WebSiteAnalyzer(pageRepository, lemmaRepository, indexRepository, fieldRepository, siteRepository, siteConfig);
                         Site site = getSite(siteObject);
                         siteAnalyzer.setSite(site);
                         siteAnalyzer.setMainPath(site.getUrl());

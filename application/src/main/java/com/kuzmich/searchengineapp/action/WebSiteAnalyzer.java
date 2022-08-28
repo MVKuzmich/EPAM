@@ -1,5 +1,6 @@
 package com.kuzmich.searchengineapp.action;
 
+import com.kuzmich.searchengineapp.config.SiteConfig;
 import com.kuzmich.searchengineapp.entity.*;
 import com.kuzmich.searchengineapp.repository.*;
 
@@ -24,10 +25,6 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class WebSiteAnalyzer extends RecursiveAction {
-
-    private static final String USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" +
-            " (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
-    private static final String REFERRER = "https://www.google.com";
     private static CopyOnWriteArraySet<String> serviceSet = new CopyOnWriteArraySet<>();
     @Setter
     @Getter
@@ -46,6 +43,7 @@ public class WebSiteAnalyzer extends RecursiveAction {
     private final IndexRepository indexRepository;
     private final FieldRepository fieldRepository;
     private final SiteRepository siteRepository;
+    private final SiteConfig siteConfig;
 
 
     @Override
@@ -57,14 +55,14 @@ public class WebSiteAnalyzer extends RecursiveAction {
             int slashIndex = mainPath.indexOf("/", twoSlashIndex);
             try {
                 Connection jsoupConnection = Jsoup.connect(mainPath);
-                Document document = jsoupConnection.userAgent(USERAGENT).referrer(REFERRER).timeout(0).get();
+                Document document = jsoupConnection.userAgent(siteConfig.getUserAgent()).referrer(siteConfig.getReferrer()).timeout(0).get();
                 String pathFormat = (slashIndex == -1) ? "/" : mainPath.substring(slashIndex);
                 int statusCode = jsoupConnection.execute().statusCode();
-                String htmlContent = document.toString();
+                String htmlContent = document.toString().toLowerCase();
                 Page page = pageRepository.saveAndFlush(Page.builder().path((pathFormat.endsWith("/") || pathFormat.endsWith(".html")) ? pathFormat : pathFormat.concat("/")).code(statusCode).content(htmlContent).site(site).build());
                 log.info("SAVED page: {}, pageId: {}", page.getPath(), page.getId());
 
-                new PageIndexExecutor(fieldRepository, lemmaRepository, indexRepository, siteRepository).executePageIndexing(page);
+                new PageIndexExecutor(fieldRepository, lemmaRepository, indexRepository, siteRepository).executePageIndexing(page, document);
 
                 Elements elements = document.select("a[abs:href^=" + site.getUrl() + "]");
                 Set<String> links = elements.stream()
@@ -80,7 +78,7 @@ public class WebSiteAnalyzer extends RecursiveAction {
                         if (isIndexationStopped || isOnePageIndexation) {
                             break;
                         }
-                        WebSiteAnalyzer task = new WebSiteAnalyzer(pageRepository, lemmaRepository, indexRepository, fieldRepository, siteRepository);
+                        WebSiteAnalyzer task = new WebSiteAnalyzer(pageRepository, lemmaRepository, indexRepository, fieldRepository, siteRepository, siteConfig);
                         task.setSite(site);
                         task.setMainPath(link);
                         task.fork();
