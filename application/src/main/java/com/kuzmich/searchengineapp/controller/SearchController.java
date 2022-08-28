@@ -27,8 +27,7 @@ public class SearchController {
     @ResponseBody
     public ResponseEntity<SearchResult> getSearchResult(@RequestParam("query") String query,
                                         @RequestParam("offset") Integer offset,
-                                        @RequestParam("limit") Integer limit,
-                                        @RequestParam(value = "site", required = false) String site) {
+                                        @RequestParam("limit") Integer limit) {
         if (query.isBlank()) {
             throw new EmptySearchQueryException(
                     new ResultDTO(false, "Задан пустой поисковый запрос").getError());
@@ -36,7 +35,7 @@ public class SearchController {
             throw new IndexExecutionException(new ResultDTO(false, "Индексация сайта не произведена").getError());
         }
         else {
-            SearchResult result = searchService.getSearchResult(query, offset, limit, site);
+            SearchResult result = searchService.getSearchResult(query, offset, limit);
             return ResponseEntity.ok(result);
         }
     }
