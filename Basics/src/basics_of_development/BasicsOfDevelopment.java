@@ -40,7 +40,7 @@ public class BasicsOfDevelopment {
 
     }
 
-    // Проверить, попадает ли координата в выделeннyю область
+    // Проверить, попадает ли координата в выделeннyю область (Задание 6)
     public boolean isGettingIntoAreaByCoordinates(int x, int y) {
         return (x <= 2 && x >= -2 && y <= 4) || (x <= 4 && x >= -4 && y <= -3);
 
@@ -72,8 +72,8 @@ public class BasicsOfDevelopment {
     Задание 2
      */
     public int getMax(int a, int b, int c, int d) {
-        int minAB = (a > b) ? a : b;
-        int minCD = (c > d) ? c : d;
+        int minAB = (a > b) ? b : a;
+        int minCD = (c > d) ? d : c;
         return (minAB > minCD) ? minAB : minCD;
 
     }
