@@ -96,19 +96,6 @@ public class ArraySorting {
     определить место вставки - БИНАРНЫЙ ПОИСК
     (Задание 5)
      */
-    public int getIndexForPlaceViaBinarySearch(int[] array, int item, int first, int last) {
-        while (first <= last) {
-            int middle = first + (last - first) / 2;
-            if (item == array[middle]) {
-                return middle + 1;
-            } else if (item > array[middle]) {
-                first = middle + 1;
-            } else {
-                last = middle - 1;
-            }
-        }
-        return first;
-    }
 
     public int[] executeInsertionSorting(int[] array) {
         int locationIndex;
@@ -125,6 +112,19 @@ public class ArraySorting {
             array[lastSortedIndex + 1] = selectedItem;
         }
         return array;
+    }
+    public int getIndexForPlaceViaBinarySearch(int[] array, int item, int first, int last) {
+        while (first <= last) {
+            int middle = first + (last - first) / 2;
+            if (item == array[middle]) {
+                return middle + 1;
+            } else if (item > array[middle]) {
+                first = middle + 1;
+            } else {
+                last = middle - 1;
+            }
+        }
+        return first;
     }
 
     /*
@@ -173,6 +173,7 @@ public class ArraySorting {
             numerators[i] = numerators[i] * commonDenominator / denominators[i];
         }
         Arrays.sort(numerators);
+        System.out.println("Result:");
         for(int i : numerators) {
             System.out.print(i +"/" + commonDenominator + " ");
         }
