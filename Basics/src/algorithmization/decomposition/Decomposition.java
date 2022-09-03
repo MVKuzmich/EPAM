@@ -3,6 +3,7 @@ package algorithmization.decomposition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Decomposition {
 
@@ -82,35 +83,27 @@ public class Decomposition {
     (Задание 4)
      */
 
-    public double findMaxDistanceBetweenPoints(Point[] points) {
+    public String findMaxDistanceBetweenPoints(Point[] points) {
+        Point firstPoint = null;
+        Point secondPoint = null;
         double maxDistance = Double.MIN_VALUE;
         for (int i = 0; i < points.length - 1; i++) {
             for (int j = i + 1; j < points.length; j++) {
                 double distance = getDistanceFromPoint(points[i], points[j]);
-                System.out.printf("расстояние между %s и %s -> %.3f\n", points[i].name, points[j].name, distance);
+                System.out.printf("distance between %s and %s -> %.3f\n", points[i].getName(), points[j].getName(), distance);
                 if (distance > maxDistance) {
                     maxDistance = distance;
+                    firstPoint = points[i];
+                    secondPoint = points[j];
                 }
             }
         }
-        return maxDistance;
+        return String.format("max distance %.3f, between %s and %s", maxDistance, firstPoint, secondPoint);
     }
 
     private double getDistanceFromPoint(Point point1, Point point2) {
-        return Math.sqrt(Math.pow((point1.coordinateX - point2.coordinateX), 2) +
-                Math.pow((point1.coordinateY - point2.coordinateY), 2));
-    }
-
-    private static class Point {
-        private final String name;
-        private final int coordinateX;
-        private final int coordinateY;
-
-        public Point(String name, int coordinateX, int coordinateY) {
-            this.name = name;
-            this.coordinateX = coordinateX;
-            this.coordinateY = coordinateY;
-        }
+        return Math.sqrt(Math.pow((point1.getCoordinateX() - point2.getCoordinateX()), 2) +
+                Math.pow((point1.getCoordinateY() - point2.getCoordinateY()), 2));
     }
 
     /*
@@ -118,22 +111,22 @@ public class Decomposition {
     Вывести на печать
     (Задание 5)
      */
-    public void findSecondMaxNumber(int[] array) {
+    public int findSecondMaxNumber(int[] array) {
         int maxNumber = findMaxNumber(array);
         int secondMaxNumber = Integer.MIN_VALUE;
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] != maxNumber && array[i] > secondMaxNumber) {
-                secondMaxNumber = array[i];
+        for (int j : array) {
+            if (j != maxNumber && j > secondMaxNumber) {
+                secondMaxNumber = j;
             }
         }
-        System.out.println(secondMaxNumber);
+        return secondMaxNumber;
     }
 
     private int findMaxNumber(int[] array) {
         int maxNumber = Integer.MIN_VALUE;
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] > maxNumber) {
-                maxNumber = array[i];
+        for (int j : array) {
+            if (j > maxNumber) {
+                maxNumber = j;
             }
         }
         return maxNumber;
@@ -174,13 +167,14 @@ public class Decomposition {
     (Задача 8)
      */
     public String findArrayItemsSumBetween(int[] array, int firstIndex, int secondIndex) {
-        List<String> sumList = new ArrayList<>();
+        List<Integer> sumList = new ArrayList<>();
         if (firstIndex < array.length - 2 && secondIndex < array.length - 2) {
             for (int i = firstIndex; i <= secondIndex; i++) {
-                sumList.add(String.valueOf(findSumOfThreeNumberFrom(array, i)));
+                sumList.add((findSumOfThreeNumberFrom(array, i)));
             }
         }
-        return String.join(" ", sumList);
+        return (!sumList.isEmpty()) ? sumList.stream().map(String::valueOf).collect(Collectors.joining(" "))
+        : "Calculation is not possible! Enter other couple of indexes!";
     }
 
     private int findSumOfThreeNumberFrom(int[] array, int index) {
@@ -192,7 +186,6 @@ public class Decomposition {
     (Задание 9)
      */
     public double getTetragonSquare(double side1, double side2, double side3, double side4) {
-//        double hypotenuse = Math.sqrt(Math.pow(side1, 2) + Math.pow(side2, 2));
         double hypotenuse = Math.hypot(side1, side2);
         return findTriangleSquareBySides(side1, side2, hypotenuse)
                 + findTriangleSquareBySides(hypotenuse, side3, side4);
@@ -287,8 +280,7 @@ public class Decomposition {
     }
 
     /*
-    Найти числа Армстронга (равно сумме своих цифр, возведённых в степень, равную количеству его цифр 153 = 1
-    в диапазоне от 1 до K
+    Найти числа Армстронга (равно сумме своих цифр, возведённых в степень, равную количеству его цифр в диапазоне от 1 до K
     (Задание 14)
      */
     public void getArmstrongNumbersUntilRangeTo(int to) {
@@ -352,8 +344,8 @@ public class Decomposition {
             }
         }
         System.out.println();
-        System.out.println(sum);
-        System.out.println(countEvenDigitsIn(sum));
+        System.out.printf("Result: sum is %d\n", sum);
+        System.out.printf("Count of even digits in sum: %d\n", countEvenDigitsIn(sum));
     }
 
     private int countEvenDigitsIn(long number) {
@@ -388,7 +380,9 @@ public class Decomposition {
         int result = Integer.MIN_VALUE;
         int subtractionCount = 0;
         while(result != 0) {
-            result = number - getSumOfNumberDigits(number);
+            int digitSum = getSumOfNumberDigits(number);
+            result = number - digitSum;
+            System.out.printf("%d = %d - %d\n", result, number, digitSum);
             subtractionCount++;
             number = result;
         }
