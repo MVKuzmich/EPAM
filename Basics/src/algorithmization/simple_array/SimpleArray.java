@@ -1,5 +1,6 @@
 package algorithmization.simple_array;
 
+import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +30,7 @@ public class SimpleArray {
                 countReplace++;
             }
         }
+        System.out.printf("result array: %s\n", Arrays.toString(array));
         return countReplace;
     }
 
@@ -46,7 +48,7 @@ public class SimpleArray {
                 countNullable++;
             }
         }
-        return String.format("Количество положительных чисел - %d, отрицательных - %d, нулей - %d", countPositive, countNegative, countNullable);
+        return String.format("Amount positive number - %d, negative - %d, null - %d", countPositive, countNegative, countNullable);
     }
 
     //Поменять местами максимальный и минимальный элементы массива (Задание 4)
@@ -63,17 +65,18 @@ public class SimpleArray {
     }
 
     //Вывести на печать только те элементы массива, для которых array[i] > i (Задание 5)
-    public void getItemIfValueGreaterThanIndex(int[] array) {
+    public String getItemIfValueGreaterThanIndex(int[] array) {
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < array.length; i++) {
             if (array[i] > i) {
-                System.out.print(array[i] + " ");
+                builder.append(array[i]).append(" ");
             }
         }
+        return builder.toString();
     }
 
     //Вычислить сумму чисел, порядковые номера которых простые числа (Задание 6)
     public double getItemSumIfIndexPrime(double[] array) {
-        List<Double> list = new ArrayList<>();
         double result = 0;
         for (int i = 2; i < array.length; i++) {
             List<Integer> buff = new ArrayList<>();
@@ -89,7 +92,7 @@ public class SimpleArray {
         return result;
     }
 
-    //в массиве действиетльных чисел найти max а1 + а2n, a2 + a(2n - 1)...(Задание 7)
+    //в массиве действительных чисел найти max а1 + а2n, a2 + a(2n - 1)...(Задание 7)
     public double getMaxSumOppositeItems(double[] array) {
         double max = Double.MIN_VALUE;
         for (int i = 0; i < array.length / 2; i++) {
