@@ -8,6 +8,12 @@ public class MultidimensionalArray {
     МАССИВЫ МАССИВОВ
      */
 
+    public void printMatrix(Number[][] matrix) {
+        Arrays.stream(matrix).forEach(array -> System.out.println(Arrays.toString(array)));
+    }
+    public Number[][] convertToNumberType(int[][] matrix) {
+        return Arrays.stream(matrix).map(arr -> Arrays.stream(arr).boxed().toArray(Integer[]::new)).toArray(Number[][]::new);
+    }
     //В многомерном массиве вывести все нечетные СТОЛБЦЫ, у которых первый элемент больше последнего (Задание 1)
     public void findMatrixOddColumnIfFirstItemGreaterLast(int[][] matrix) {
         int embeddedArrayLength = matrix[0].length;
@@ -16,8 +22,9 @@ public class MultidimensionalArray {
                 for (int j = 0; j < matrix.length; j++) {
                     System.out.println(matrix[j][i]);
                 }
+                System.out.println("-------------------");
             }
-            System.out.println("-------------------");
+
         }
     }
 
@@ -63,8 +70,8 @@ public class MultidimensionalArray {
     n...1
     ....
      */
-    public int[][] createMatrixByTemplate(int size) {
-        int[][] matrix = new int[size][size];
+    public Integer[][] createMatrixByTemplate(int size) {
+        Integer[][] matrix = new Integer[size][size];
         for (int i = 0; i < size; i++) {
             int first = 1;
             int last = size;
@@ -86,8 +93,8 @@ public class MultidimensionalArray {
    3 3 0 0
    4 0 0 0
      */
-    public int[][] createMatrixByTemplateWithNull(int size) {
-        int[][] matrix = new int[size][size];
+    public Integer[][] createMatrixByTemplateWithNull(int size) {
+        Integer[][] matrix = new Integer[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (i > 0 && j >= size - i) {
@@ -109,8 +116,8 @@ public class MultidimensionalArray {
   0 1 1 1 1 0
   1 1 1 1 1 1
     */
-    public int[][] createMatrixByTemplate2(int size) {
-        int[][] matrix = new int[size][size];
+    public Integer[][] createMatrixByTemplate2(int size) {
+        Integer[][] matrix = new Integer[size][size];
         for (int i = 0; i < size / 2; i++) {
             for (int j = 0; j < size; j++) {
                 if (j >= size - i || j < i) {
@@ -137,22 +144,20 @@ public class MultidimensionalArray {
     a[i][j] = sin((i^2 - j^2) / N)
     2. Подсчитать количество положительных элементов (Задание 7)
      */
-    public double[][] createMatrixByFunction(int size) {
-        double[][] matrix = new double[size][size];
+    public Double[][] createMatrixByFunction(int size) {
+        Double[][] matrix = new Double[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 double matrixItem = Math.sin(Math.pow(i, 2) - Math.pow(j, 2)) / size;
                 matrix[i][j] = matrixItem;
-                System.out.print(matrix[i][j] + " ");
             }
-            System.out.println();
         }
         return matrix;
     }
 
     public int countMatrixPositiveItems() {
         int count = 0;
-        double[][] matrix = createMatrixByFunction(5);
+        Double[][] matrix = createMatrixByFunction(5);
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 if (matrix[i][j] > 0) {
@@ -163,7 +168,7 @@ public class MultidimensionalArray {
         return count;
     }
 
-    // Поменять местами два столбца в матрица (номера столбцов вводит пользователь) (Задание 8)
+    // Поменять местами два столбца в матрице (номера столбцов вводит пользователь) (Задание 8)
     public void rotateMatrixColumn(int[][] matrix) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter first column number:");
@@ -186,10 +191,10 @@ public class MultidimensionalArray {
     }
 
     //Посчитать СУММУ элементов в каждом СТОЛБЦЕ матрицы, определить какой столбец содержит максимальную сумму (Задание 9)
-    public int getMatrixColumnWithMaxSum(int[][] matrix) {
+    public String getMatrixColumnWithMaxSum(int[][] matrix) {
         int maxColumnSum = 0;
         int columnIndex = 0;
-        for (int j = 0; j < matrix.length; j++) {
+        for (int j = 0; j < matrix[0].length; j++) {
             int columnSum = 0;
             for (int i = 0; i < matrix.length; i++) {
                 columnSum += matrix[i][j];
@@ -199,7 +204,7 @@ public class MultidimensionalArray {
                 columnIndex = j;
             }
         }
-        return columnIndex;
+        return String.format("Max sum: %d, column index: %d", maxColumnSum, columnIndex);
     }
 
     //Найти положительные элементы главной диагонали квадратной матрицы (Задание 10)
@@ -306,7 +311,7 @@ public class MultidimensionalArray {
 
     /*
     Cформировать случайную матрицу m * n, состоящию из 0 и 1,
-    в каждом СТОЛБЦЕ число единиц равно номеру стоблбца (Задание 14)
+    в каждом СТОЛБЦЕ число единиц равно номеру столбца (Задание 14)
      */
     public int[][] getRandomMatrixWith0And1(int size1, int size2) {
         int[][] matrix = new int[size1][size2];
@@ -325,7 +330,7 @@ public class MultidimensionalArray {
     }
 
     /*
-    Найти найбольший элемент матрицы, заменить нечетные элементы на него (Задание 15)
+    Найти наибольший элемент матрицы, заменить нечетные элементы на него (Задание 15)
      */
     public int findMatrixMaxItem(int[][] matrix) {
         int max = Integer.MIN_VALUE;
